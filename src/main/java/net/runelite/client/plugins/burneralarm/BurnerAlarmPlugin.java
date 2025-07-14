@@ -41,7 +41,6 @@ public class BurnerAlarmPlugin extends Plugin
     private SourceDataLine soundLine;
     private byte[] soundBuffer;
 
-    // Master switches for the notification cycle
     private boolean preNotificationFiredThisCycle = false;
     private boolean soundFiredThisCycle = false;
 
@@ -106,10 +105,8 @@ public class BurnerAlarmPlugin extends Plugin
     {
         if (litBurners.isEmpty())
         {
-            // If the map is empty, it means a new cycle can begin.
             if (preNotificationFiredThisCycle || soundFiredThisCycle)
             {
-                log.debug("All burners gone, resetting cycle flags.");
                 resetCycle();
             }
             return;
@@ -126,27 +123,24 @@ public class BurnerAlarmPlugin extends Plugin
         {
             long secondsSinceLit = Duration.between(entry.getValue(), Instant.now()).getSeconds();
 
-            // Check if it's time for the sound alarm
             if (!soundFiredThisCycle && secondsSinceLit >= certainDurationSeconds)
             {
                 playSound = true;
-                soundFiredThisCycle = true; // Flip the switch for sound
+                soundFiredThisCycle = true;
             }
 
-            // The sound alarm also means the burner has expired
             if (secondsSinceLit >= certainDurationSeconds)
             {
                 burnersToRemove.add(entry.getKey());
             }
 
-            // Check if it's time for the text pre-warning
             if (!preNotificationFiredThisCycle && secondsSinceLit >= preNotificationTriggerTime)
             {
                 if (config.sendNotification())
                 {
                     notifier.notify("A gilded altar burner will enter its random burnout phase soon!");
                 }
-                preNotificationFiredThisCycle = true; // Flip the switch for text
+                preNotificationFiredThisCycle = true;
             }
         }
 
@@ -192,16 +186,15 @@ public class BurnerAlarmPlugin extends Plugin
             {
                 FloatControl volumeControl = (FloatControl) soundLine.getControl(FloatControl.Type.MASTER_GAIN);
                 float volumePercent = config.annoyingSoundVolume() / 100.0f;
-                // A decibel range from -40f (very quiet) to 0f (normal)
+                // A decibel range from -40f (very quiet) to a max of 0f (normal)
                 float minDb = -40.0f;
                 float maxDb = 0.0f;
                 float gain = minDb + (volumePercent * (maxDb - minDb));
-                // Clamp the value to ensure it's within the supported range
                 gain = Math.max(volumeControl.getMinimum(), Math.min(gain, volumeControl.getMaximum()));
                 volumeControl.setValue(gain);
             }
 
-            soundLine.flush(); // Clear any previous sound data
+            soundLine.flush();
             soundLine.write(soundBuffer, 0, soundBuffer.length);
         }).start();
     }
