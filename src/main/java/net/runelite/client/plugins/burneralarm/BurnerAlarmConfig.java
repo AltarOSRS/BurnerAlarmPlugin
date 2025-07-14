@@ -11,7 +11,7 @@ public interface BurnerAlarmConfig extends Config
     @ConfigItem(
             keyName = "sendNotification",
             name = "Send Notification",
-            description = "Toggle the standard text-based notification.",
+            description = "Toggle the notification pre-warning.",
             position = 1
     )
     default boolean sendNotification()
@@ -20,28 +20,28 @@ public interface BurnerAlarmConfig extends Config
     }
 
     @ConfigItem(
-            keyName = "playAnnoyingSound",
-            name = "Play Custom Sound",
-            description = "Toggle the custom alarm sound.",
+            keyName = "playAlertSound",
+            name = "Play Alert Sound",
+            description = "Toggle the main audible alarm. Volume is controlled by RuneLite's 'Sound Effects' slider.",
             position = 2
     )
-    default boolean playAnnoyingSound()
+    default boolean playAlertSound()
     {
         return true;
     }
 
     @Range(
-            min = 1,
-            max = 100
+            min = -40,
+            max = 6
     )
     @ConfigItem(
-            keyName = "annoyingSoundVolume",
-            name = "Custom Sound Volume",
-            description = "Adjust the volume of the custom alarm sound. (Requires custom sound to be enabled)",
+            keyName = "soundVolume",
+            name = "Sound Volume (dB)",
+            description = "Adjust the volume of the alarm sound in decibels (dB).",
             position = 3
     )
-    default int annoyingSoundVolume()
+    default int soundVolume()
     {
-        return 25; // Default to a reasonable 25% volume
+        return -20;
     }
 }

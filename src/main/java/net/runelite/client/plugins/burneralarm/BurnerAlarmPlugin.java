@@ -8,11 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.FloatControl;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.SourceDataLine;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.GameObject;
@@ -21,6 +16,7 @@ import net.runelite.api.events.GameObjectDespawned;
 import net.runelite.api.events.GameObjectSpawned;
 import net.runelite.api.events.GameTick;
 import net.runelite.client.Notifier;
+import net.runelite.client.audio.AudioPlayer;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
@@ -38,8 +34,6 @@ public class BurnerAlarmPlugin extends Plugin
     private static final int PRE_NOTIFICATION_LEAD_TIME_SECONDS = 10;
 
     private final Map<GameObject, Instant> litBurners = new HashMap<>();
-    private SourceDataLine soundLine;
-    private byte[] soundBuffer;
 
     private boolean preNotificationFiredThisCycle = false;
     private boolean soundFiredThisCycle = false;
@@ -53,6 +47,9 @@ public class BurnerAlarmPlugin extends Plugin
     @Inject
     private BurnerAlarmConfig config;
 
+    @Inject
+    private AudioPlayer audioPlayer;
+
     @Provides
     BurnerAlarmConfig provideConfig(ConfigManager configManager)
     {
@@ -63,17 +60,12 @@ public class BurnerAlarmPlugin extends Plugin
     protected void startUp()
     {
         resetCycle();
-        initializeSound();
     }
 
     @Override
     protected void shutDown()
     {
         resetCycle();
-        if (soundLine != null)
-        {
-            soundLine.close();
-        }
     }
 
     private void resetCycle()
@@ -144,58 +136,20 @@ public class BurnerAlarmPlugin extends Plugin
             }
         }
 
-        if (playSound && config.playAnnoyingSound())
+        if (playSound && config.playAlertSound())
         {
-            playAnnoyingSound();
+            new Thread(() -> {
+                try
+                {
+                    audioPlayer.play(getClass(), "alarm.wav", config.soundVolume());
+                }
+                catch (Exception e)
+                {
+                    log.warn("Failed to play Burner Alarm sound", e);
+                }
+            }).start();
         }
 
         burnersToRemove.forEach(litBurners::remove);
-    }
-
-    private void initializeSound() {
-        try
-        {
-            AudioFormat audioFormat = new AudioFormat(8000f, 8, 1, true, false);
-            soundLine = AudioSystem.getSourceDataLine(audioFormat);
-            soundLine.open(audioFormat);
-            soundLine.start();
-
-            soundBuffer = new byte[8000]; // 1 second of audio
-            for (int i = 0; i < soundBuffer.length; i++)
-            {
-                double angle = i / (8000f / 1000) * 2.0 * Math.PI;
-                soundBuffer[i] = (byte) (Math.sin(angle) * 127.0);
-            }
-        }
-        catch (LineUnavailableException e)
-        {
-            log.warn("Burner Alarm: Unable to initialize audio line.", e);
-            soundLine = null;
-        }
-    }
-
-    private void playAnnoyingSound()
-    {
-        if (soundLine == null || soundBuffer == null)
-        {
-            return;
-        }
-
-        new Thread(() -> {
-            if (soundLine.isControlSupported(FloatControl.Type.MASTER_GAIN))
-            {
-                FloatControl volumeControl = (FloatControl) soundLine.getControl(FloatControl.Type.MASTER_GAIN);
-                float volumePercent = config.annoyingSoundVolume() / 100.0f;
-                // A decibel range from -40f (very quiet) to a max of 0f (normal)
-                float minDb = -40.0f;
-                float maxDb = 0.0f;
-                float gain = minDb + (volumePercent * (maxDb - minDb));
-                gain = Math.max(volumeControl.getMinimum(), Math.min(gain, volumeControl.getMaximum()));
-                volumeControl.setValue(gain);
-            }
-
-            soundLine.flush();
-            soundLine.write(soundBuffer, 0, soundBuffer.length);
-        }).start();
     }
 }
