@@ -25,13 +25,14 @@ import net.runelite.client.plugins.PluginDescriptor;
 
 @Slf4j
 @PluginDescriptor(
+        // Synced name, description, and tags with runelite-plugin.properties
         name = "Burner Alarm",
-        description = "Notifies you when gilded altar burners are about to despawn.",
-        tags = {"firemaking", "altar", "prayer", "gilded", "burner"}
+        description = "Sends a notification and plays a really annoying sound when your poh burners are about to go out",
+        tags = {"poh", "player owned house", "prayer", "altar", "burner", "incense", "notification", "alarm"}
 )
 public class BurnerAlarmPlugin extends Plugin {
     private static final Set<Integer> LIT_BURNER_IDS = ImmutableSet.of(13211, 13213);
-    private static final int NOTIFICATION_COOLDOWN_TICKS = 25;
+    private static final int NOTIFICATION_COOLDOWN_TICKS = 25; // Prevents notification spam
 
     @RequiredArgsConstructor
     private static class BurnerState {
@@ -41,8 +42,8 @@ public class BurnerAlarmPlugin extends Plugin {
     }
 
     private final Map<GameObject, BurnerState> litBurners = new HashMap<>();
-    private int lastTextAlertTick = 0;
-    private int lastSoundAlertTick = 0;
+    private int lastTextAlertTick = 0; // Cooldown for text notifications
+    private int lastSoundAlertTick = 0; // Cooldown for sound notifications
 
     @Inject
     private Client client;
@@ -85,7 +86,15 @@ public class BurnerAlarmPlugin extends Plugin {
 
     @Subscribe
     public void onGameStateChanged(GameStateChanged event) {
-        if (event.getGameState() != GameState.LOGGED_IN && event.getGameState() != GameState.LOADING) {
+        // Clears burners when game state transitions to LOGGED_IN (e.g., after loading a new area like POH exit/entry)
+        // or during other critical state changes (logout, disconnect).
+        if (event.getGameState() == GameState.LOGGED_IN ||
+                event.getGameState() == GameState.LOGIN_SCREEN ||
+                event.getGameState() == GameState.HOPPING ||
+                event.getGameState() == GameState.CONNECTION_LOST ||
+                event.getGameState() == GameState.STARTING ||
+                event.getGameState() == GameState.UNKNOWN)
+        {
             if (!litBurners.isEmpty()) {
                 log.debug("Cleared lit burners due to game state change: {}", event.getGameState());
                 litBurners.clear();
@@ -95,7 +104,8 @@ public class BurnerAlarmPlugin extends Plugin {
 
     @Subscribe
     public void onGameTick(GameTick event) {
-        if (litBurners.isEmpty()) {
+        // Only process if client is logged in and there are burners to track
+        if (client.getGameState() != GameState.LOGGED_IN || client.getLocalPlayer() == null || litBurners.isEmpty()) {
             return;
         }
 
@@ -104,23 +114,35 @@ public class BurnerAlarmPlugin extends Plugin {
         final int certainDurationTicks = 200 + fmLevel;
         final int preNotificationTriggerTicks = certainDurationTicks - config.preNotificationLeadTimeTicks();
 
+        boolean triggerTextNotificationThisTick = false;
+        boolean triggerSoundNotificationThisTick = false;
+
         for (BurnerState burnerState : litBurners.values()) {
             final int ticksSinceLit = currentTick - burnerState.startTick;
 
-            if (!burnerState.soundNotificationSent && ticksSinceLit >= certainDurationTicks) {
-                if (config.playAlertSound() && currentTick >= lastSoundAlertTick + NOTIFICATION_COOLDOWN_TICKS) {
-                    playSound();
-                    lastSoundAlertTick = currentTick;
-                    burnerState.soundNotificationSent = true;
-                }
+            // Trigger pre-notification if conditions met and not already sent for this burner
+            if (!burnerState.preNotificationSent && ticksSinceLit >= preNotificationTriggerTicks) {
+                triggerTextNotificationThisTick = true;
+                burnerState.preNotificationSent = true; // Mark as sent for this specific burner
             }
 
-            if (!burnerState.preNotificationSent && ticksSinceLit >= preNotificationTriggerTicks) {
-                if (config.sendNotification() && currentTick >= lastTextAlertTick + NOTIFICATION_COOLDOWN_TICKS) {
-                    notifier.notify("A gilded altar burner will enter its random burnout phase soon!");
-                    lastTextAlertTick = currentTick;
-                    burnerState.preNotificationSent = true;
-                }
+            // Trigger sound notification if conditions met and not already sent for this burner
+            if (!burnerState.soundNotificationSent && ticksSinceLit >= certainDurationTicks) {
+                triggerSoundNotificationThisTick = true;
+                burnerState.soundNotificationSent = true; // Mark as sent for this specific burner
+            }
+        }
+
+        // Apply global cooldowns and send notifications (once per tick per type)
+        if (triggerTextNotificationThisTick && config.sendNotification() && currentTick >= lastTextAlertTick + NOTIFICATION_COOLDOWN_TICKS) {
+            notifier.notify("A gilded altar burner will enter its random burnout phase soon!");
+            lastTextAlertTick = currentTick;
+        }
+
+        if (triggerSoundNotificationThisTick) {
+            if (config.playAlertSound() && currentTick >= lastSoundAlertTick + NOTIFICATION_COOLDOWN_TICKS) {
+                playSound();
+                lastSoundAlertTick = currentTick;
             }
         }
     }
