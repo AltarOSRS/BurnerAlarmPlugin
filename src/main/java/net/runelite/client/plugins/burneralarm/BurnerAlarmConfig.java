@@ -59,6 +59,6 @@ public interface BurnerAlarmConfig extends Config
     )
     default int preNotificationLeadTimeTicks()
     {
-        return 17; // Default to ~10 seconds
+        return 17;
     }
 }

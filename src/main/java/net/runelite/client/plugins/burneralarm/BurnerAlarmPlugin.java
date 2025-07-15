@@ -28,7 +28,7 @@ import net.runelite.client.plugins.PluginDescriptor;
 public class BurnerAlarmPlugin extends Plugin
 {
     private static final Set<Integer> LIT_BURNER_IDS = ImmutableSet.of(13211, 13213);
-    private static final int NOTIFICATION_COOLDOWN_TICKS = 25; // ~15 seconds
+    private static final int NOTIFICATION_COOLDOWN_TICKS = 25;
 
     @RequiredArgsConstructor
     private static class BurnerState
@@ -39,8 +39,6 @@ public class BurnerAlarmPlugin extends Plugin
     }
 
     private final Map<GameObject, BurnerState> litBurners = new HashMap<>();
-
-    // --- NEW: Separate cooldowns for each alert type ---
     private int lastTextAlertTick = 0;
     private int lastSoundAlertTick = 0;
 
@@ -107,10 +105,8 @@ public class BurnerAlarmPlugin extends Plugin
         {
             final int ticksSinceLit = currentTick - burnerState.startTick;
 
-            // Check for sound alarm
             if (!burnerState.soundNotificationSent && ticksSinceLit >= certainDurationTicks)
             {
-                // Use the sound-specific cooldown
                 if (config.playAlertSound() && currentTick >= lastSoundAlertTick + NOTIFICATION_COOLDOWN_TICKS)
                 {
                     playSound();
@@ -119,10 +115,8 @@ public class BurnerAlarmPlugin extends Plugin
                 burnerState.soundNotificationSent = true;
             }
 
-            // Check for pre-warning notification
             if (!burnerState.preNotificationSent && ticksSinceLit >= preNotificationTriggerTicks)
             {
-                // Use the text-specific cooldown
                 if (config.sendNotification() && currentTick >= lastTextAlertTick + NOTIFICATION_COOLDOWN_TICKS)
                 {
                     notifier.notify("A gilded altar burner will enter its random burnout phase soon!");
