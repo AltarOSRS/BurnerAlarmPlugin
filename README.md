@@ -20,3 +20,4 @@ A configurable plugin that provides a two-stage alert when POH incense burners a
 * **Send Notification:** Toggles the notification pre-warning.
 * **Play Custom Sound:** Toggles the main audible alarm.
 * **Custom Sound Volume:** Adjusts the volume of the main alarm.
+* **Pre-Warning Lead Time:** Adjusts the time between the pre-warning and audible alarm in game ticks.

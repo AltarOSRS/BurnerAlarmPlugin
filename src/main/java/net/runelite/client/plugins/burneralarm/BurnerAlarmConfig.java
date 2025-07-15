@@ -4,6 +4,7 @@ import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
 import net.runelite.client.config.Range;
+import net.runelite.client.config.Units;
 
 @ConfigGroup("burneralarm")
 public interface BurnerAlarmConfig extends Config
@@ -43,5 +44,21 @@ public interface BurnerAlarmConfig extends Config
     default int soundVolume()
     {
         return -20;
+    }
+
+    @Range(
+            min = 0,
+            max = 50
+    )
+    @Units(Units.TICKS)
+    @ConfigItem(
+            keyName = "leadTime",
+            name = "Pre-warning Lead Time",
+            description = "How many ticks before the alarm to send the notification pre-warning (0.6 seconds per tick).",
+            position = 4
+    )
+    default int preNotificationLeadTimeTicks()
+    {
+        return 17; // Default to ~10 seconds
     }
 }

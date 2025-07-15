@@ -1,13 +1,12 @@
 package net.runelite.client.plugins.burneralarm;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Provides;
-import java.time.Duration;
-import java.time.Instant;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.inject.Inject;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.GameObject;
@@ -28,15 +27,22 @@ import net.runelite.client.plugins.PluginDescriptor;
 )
 public class BurnerAlarmPlugin extends Plugin
 {
-    private static final int LIT_BURNER_1 = 13211;
-    private static final int LIT_BURNER_2 = 13213;
-    private static final double GAME_TICK_SECONDS = 0.6;
-    private static final int PRE_NOTIFICATION_LEAD_TIME_SECONDS = 10;
+    private static final Set<Integer> LIT_BURNER_IDS = ImmutableSet.of(13211, 13213);
+    private static final int NOTIFICATION_COOLDOWN_TICKS = 25; // ~15 seconds
 
-    private final Map<GameObject, Instant> litBurners = new HashMap<>();
+    @RequiredArgsConstructor
+    private static class BurnerState
+    {
+        private final int startTick;
+        private boolean preNotificationSent = false;
+        private boolean soundNotificationSent = false;
+    }
 
-    private boolean preNotificationFiredThisCycle = false;
-    private boolean soundFiredThisCycle = false;
+    private final Map<GameObject, BurnerState> litBurners = new HashMap<>();
+
+    // --- NEW: Separate cooldowns for each alert type ---
+    private int lastTextAlertTick = 0;
+    private int lastSoundAlertTick = 0;
 
     @Inject
     private Client client;
@@ -59,30 +65,22 @@ public class BurnerAlarmPlugin extends Plugin
     @Override
     protected void startUp()
     {
-        resetCycle();
+        litBurners.clear();
     }
 
     @Override
     protected void shutDown()
     {
-        resetCycle();
-    }
-
-    private void resetCycle()
-    {
         litBurners.clear();
-        preNotificationFiredThisCycle = false;
-        soundFiredThisCycle = false;
     }
 
     @Subscribe
     public void onGameObjectSpawned(GameObjectSpawned event)
     {
-        GameObject gameObject = event.getGameObject();
-        int gameObjectId = gameObject.getId();
-        if (gameObjectId == LIT_BURNER_1 || gameObjectId == LIT_BURNER_2)
+        final GameObject gameObject = event.getGameObject();
+        if (LIT_BURNER_IDS.contains(gameObject.getId()))
         {
-            litBurners.put(gameObject, Instant.now());
+            litBurners.put(gameObject, new BurnerState(client.getTickCount()));
         }
     }
 
@@ -97,59 +95,53 @@ public class BurnerAlarmPlugin extends Plugin
     {
         if (litBurners.isEmpty())
         {
-            if (preNotificationFiredThisCycle || soundFiredThisCycle)
-            {
-                resetCycle();
-            }
             return;
         }
 
+        final int currentTick = client.getTickCount();
         final int fmLevel = client.getRealSkillLevel(Skill.FIREMAKING);
-        final double certainDurationSeconds = (200 + fmLevel) * GAME_TICK_SECONDS;
-        final double preNotificationTriggerTime = certainDurationSeconds - PRE_NOTIFICATION_LEAD_TIME_SECONDS;
+        final int certainDurationTicks = 200 + fmLevel;
+        final int preNotificationTriggerTicks = certainDurationTicks - config.preNotificationLeadTimeTicks();
 
-        boolean playSound = false;
-        List<GameObject> burnersToRemove = new ArrayList<>();
-
-        for (Map.Entry<GameObject, Instant> entry : litBurners.entrySet())
+        for (BurnerState burnerState : litBurners.values())
         {
-            long secondsSinceLit = Duration.between(entry.getValue(), Instant.now()).getSeconds();
+            final int ticksSinceLit = currentTick - burnerState.startTick;
 
-            if (!soundFiredThisCycle && secondsSinceLit >= certainDurationSeconds)
+            // Check for sound alarm
+            if (!burnerState.soundNotificationSent && ticksSinceLit >= certainDurationTicks)
             {
-                playSound = true;
-                soundFiredThisCycle = true;
+                // Use the sound-specific cooldown
+                if (config.playAlertSound() && currentTick >= lastSoundAlertTick + NOTIFICATION_COOLDOWN_TICKS)
+                {
+                    playSound();
+                    lastSoundAlertTick = currentTick;
+                }
+                burnerState.soundNotificationSent = true;
             }
 
-            if (secondsSinceLit >= certainDurationSeconds)
+            // Check for pre-warning notification
+            if (!burnerState.preNotificationSent && ticksSinceLit >= preNotificationTriggerTicks)
             {
-                burnersToRemove.add(entry.getKey());
-            }
-
-            if (!preNotificationFiredThisCycle && secondsSinceLit >= preNotificationTriggerTime)
-            {
-                if (config.sendNotification())
+                // Use the text-specific cooldown
+                if (config.sendNotification() && currentTick >= lastTextAlertTick + NOTIFICATION_COOLDOWN_TICKS)
                 {
                     notifier.notify("A gilded altar burner will enter its random burnout phase soon!");
+                    lastTextAlertTick = currentTick;
                 }
-                preNotificationFiredThisCycle = true;
+                burnerState.preNotificationSent = true;
             }
         }
+    }
 
-        if (playSound && config.playAlertSound())
+    private void playSound()
+    {
+        try
         {
-            new Thread(() -> {
-                try
-                {
-                    audioPlayer.play(getClass(), "alarm.wav", config.soundVolume());
-                }
-                catch (Exception e)
-                {
-                    log.warn("Failed to play Burner Alarm sound", e);
-                }
-            }).start();
+            audioPlayer.play(getClass(), "alarm.wav", config.soundVolume());
         }
-
-        burnersToRemove.forEach(litBurners::remove);
+        catch (Exception e)
+        {
+            log.warn("Failed to play Burner Alarm sound", e);
+        }
     }
 }
