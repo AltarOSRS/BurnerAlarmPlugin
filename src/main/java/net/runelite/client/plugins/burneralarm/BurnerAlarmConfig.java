@@ -23,7 +23,7 @@ public interface BurnerAlarmConfig extends Config
     @ConfigItem(
             keyName = "playAlertSound",
             name = "Play Alert Sound",
-            description = "Toggle the main audible alarm. Volume is controlled by RuneLite's 'Sound Effects' slider.",
+            description = "Toggle the main audible alarm. Volume is controlled by the 'Sound Volume' setting below.",
             position = 2
     )
     default boolean playAlertSound()
@@ -38,7 +38,7 @@ public interface BurnerAlarmConfig extends Config
     @ConfigItem(
             keyName = "soundVolume",
             name = "Sound Volume (dB)",
-            description = "Adjust the volume of the alarm sound in decibels (dB).",
+            description = "Adjust the volume of the alarm sound in decibels (dB) from -40 for quiet to 6 for loud.",
             position = 3
     )
     default int soundVolume()
