@@ -1,23 +1,37 @@
-# Burner Alarm
+# 🔥 Burner Alarm
 
-A configurable plugin that provides a two-stage alert when POH incense burners are about to expire.
+A configurable RuneLite plugin that provides a two-stage alert system when incense burners in your **Player-Owned House (POH)** are about to expire.
 
-## Features
+---
 
-* Timer scales with your Firemaking level.
-* Two-stage alert: a notification pre-warning, followed by a sound alarm.
-* Custom sound with adjustable volume.
-* Sends only one alert per set of burners.
-* Re-lighting burners cancels pending alerts.
+## ✅ Features
 
-## How It Works
+- ⏱️ **Smart timing** based on your **Firemaking level**
+- ⚠️ **Two-stage alert system**:
+    - Pre-warning notification
+    - Follow-up audible alarm
+- 🔊 **Custom sound** with adjustable volume
+- 🔁 **One alert per burner cycle** — re-lighting cancels pending alerts
+- 🔇 **Cooldown system** to prevent spam
 
-1.  A notification pre-warning is sent 10 seconds **before** burners enter their random burnout phase.
-2.  If not re-lit, the main sound alarm plays 10 seconds **later**, as the random phase begins.
+---
 
-## Configuration
+## ⚙️ How It Works
 
-* **Send Notification:** Toggles the notification pre-warning.
-* **Play Custom Sound:** Toggles the main audible alarm.
-* **Custom Sound Volume:** Adjusts the volume of the main alarm.
-* **Pre-Warning Lead Time:** Adjusts the time between the pre-warning and audible alarm in game ticks.
+1. When a burner is lit, a timer starts using the formula:  
+   **`200 + Firemaking level` ticks**
+2. At a configurable point (default **10 seconds** before burnout is possible), a **notification** is sent.
+3. If the burner is not re-lit by the time the random burnout phase starts, a **sound alarm** is played.
+
+> ⚠️ RuneLite tick = 0.6 seconds
+
+---
+
+## 🛠️ Configuration
+
+| Setting                 | Description                                                                 |
+|-------------------------|-----------------------------------------------------------------------------|
+| **Send Notification**   | Enables a pre-warning notification before burners enter the random phase    |
+| **Play Custom Sound**   | Enables the main audible alarm at the moment burnout becomes possible       |
+| **Custom Sound Volume** | Adjusts alarm volume in decibels (range: -40 dB to +6 dB)                   |
+| **Pre-Warning Lead Time** | Sets how many ticks before burnout the pre-warning should trigger         |
