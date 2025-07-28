@@ -1,37 +1,61 @@
-# 🔥 Burner Alarm
+# House Hosting Plugin
 
-A configurable RuneLite plugin that provides a two-stage alert system when incense burners in your **Player-Owned House (POH)** are about to expire.
+A RuneLite plugin designed to assist players hosting their Player-Owned Houses (POHs).
 
----
+## Features
 
-## ✅ Features
+*Note: All notifications are fully customizable in the plugin configuration menu. The defaults are good to get started with.*
 
-- ⏱️ **Smart timing** based on your **Firemaking level**
-- ⚠️ **Two-stage alert system**:
-    - Pre-warning notification
-    - Follow-up audible alarm
-- 🔊 **Custom sound** with adjustable volume
-- 🔁 **One alert per burner cycle** — re-lighting cancels pending alerts
-- 🔇 **Cooldown system** to prevent spam
+This plugin provides several key functionalities to help you manage your POH hosting:
 
----
+### Burner Alarm
 
-## ⚙️ How It Works
+Receive notifications before your incense burners extinguish.
 
-1. When a burner is lit, a timer starts using the formula:  
-   **`200 + Firemaking level` ticks**
-2. At a configurable point (default **10 seconds** before burnout is possible), a **notification** is sent.
-3. If the burner is not re-lit by the time the random burnout phase starts, a **sound alarm** is played.
+* **Two-Stage Alarm:** A pre-warning notification, followed by a final alarm sound.
 
-> ⚠️ RuneLite tick = 0.6 seconds
+* **Configurable Lead Time:** Adjust the pre-warning timing.
 
----
+* **Volume Control:** Customize the final alarm sound volume.
 
-## 🛠️ Configuration
+### Unlit Burner Highlight
 
-| Setting                 | Description                                                                 |
-|-------------------------|-----------------------------------------------------------------------------|
-| **Send Notification**   | Enables a pre-warning notification before burners enter the random phase    |
-| **Play Custom Sound**   | Enables the main audible alarm at the moment burnout becomes possible       |
-| **Custom Sound Volume** | Adjusts alarm volume in decibels (range: -40 dB to +6 dB)                   |
-| **Pre-Warning Lead Time** | Sets how many ticks before burnout the pre-warning should trigger         |
+Easily identify unlit burners.
+
+* **Visual Outline:** Draws a customizable outline around unlit incense burners.
+
+* **Configurable Color & Width:** Choose highlight color and outline thickness.
+
+### Tip Jar Notifications
+
+Get notified when players add coins to your tip jar.
+
+* **Tiered Notifications:** Different notifications and chat recoloring based on tip amount.
+
+* **Configurable Thresholds:** Set custom thresholds for tip tiers.
+
+* **Chat Recolor:** Automatically recolors in-game tip jar messages.
+
+### Player Level-Up Notifications
+
+Get notified when guests achieve level-ups.
+
+* **Generic Level-Up:** Notification for any level-up. This option is disabled by default (it can get pretty spammy). If you decide to use, enable the "Collapse game chat" option in the Chat Filter plugin to condense. 
+
+* **Level 99 Achievement:** Special notifications for level 99.
+
+* **Combat Level 126:** Distinct notification for combat level 126.
+
+### Marrentill Tracker
+
+Monitor your Marrentill supply for altars.
+
+* **Inventory Monitoring:** Tracks unnoted Clean Marrentills.
+
+* **Low Stock Warning:** Notifies you when Marrentill stock is low or depleted.
+
+### POH Guest Tracker
+
+View the number of guests in your house.
+
+* **Overlay Display:** An overlay shows the current guest count in your POH.
