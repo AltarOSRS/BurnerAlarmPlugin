@@ -4,14 +4,14 @@ import net.runelite.client.config.*;
 
 import java.awt.*;
 
-@ConfigGroup("househosting")
+@ConfigGroup("burneralarm")
 public interface BurnerAlarmConfig extends Config {
 
     // --- Burner Alarm Section ---
     @ConfigSection(name = "Burner Alarm", description = "Settings for the two-stage incense burner alarm.", position = 0, closedByDefault = false)
     String burnerAlarmSection = "burnerAlarmSection";
 
-    @ConfigItem(keyName = "burnerPreWarningNotification", name = "Pre-warning Notification", description = "Configure the notification that fires shortly before burners can go out.", position = 1, section = burnerAlarmSection)
+    @ConfigItem(keyName = "sendNotification", name = "Pre-warning Notification", description = "Configure the notification that fires shortly before burners can go out.", position = 1, section = burnerAlarmSection)
     default Notification burnerPreWarningNotification() {
         return new Notification()
                 .withEnabled(true)
@@ -40,20 +40,20 @@ public interface BurnerAlarmConfig extends Config {
         return true;
     }
 
-    @ConfigItem(keyName = "playFinalAlarm", name = "Play Final Alarm", description = "Toggle the main audible alarm that plays the moment burners can extinguish.", position = 3, section = burnerAlarmSection)
+    @ConfigItem(keyName = "playAlertSound", name = "Play Final Alarm", description = "Toggle the main audible alarm that plays the moment burners can extinguish.", position = 3, section = burnerAlarmSection)
     default boolean playFinalAlarm() {
         return true;
     }
 
     @Range(min = -40, max = 6)
-    @ConfigItem(keyName = "finalAlarmVolume", name = "Final Alarm Volume (dB)", description = "Adjust the volume of the 'Final Alarm' sound (-40 to +6).", position = 4, section = burnerAlarmSection)
+    @ConfigItem(keyName = "soundVolume", name = "Final Alarm Volume (dB)", description = "Adjust the volume of the 'Final Alarm' sound (-40 to +6).", position = 4, section = burnerAlarmSection)
     default int finalAlarmVolume() {
         return -30;
     }
 
     @Range(min = 0, max = 50)
     @Units(Units.TICKS)
-    @ConfigItem(keyName = "burnerLeadTime", name = "Pre-warning Lead Time", description = "How many ticks before the final alarm to send the pre-warning notification.", position = 5, section = burnerAlarmSection)
+    @ConfigItem(keyName = "leadTime", name = "Pre-warning Lead Time", description = "How many ticks before the final alarm to send the pre-warning notification.", position = 5, section = burnerAlarmSection)
     default int burnerLeadTime() {
         return 25;
     }
