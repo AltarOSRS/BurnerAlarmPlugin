@@ -199,14 +199,17 @@ public class BurnerAlarmPlugin extends Plugin {
             if (triggerPreWarningThisTick) {
                 if (currentTick >= lastPreWarningTick + BurnerAlarmConstants.NOTIFICATION_COOLDOWN_TICKS) {
                     Notification preWarningNotification = config.burnerPreWarningNotification();
+                    String notificationMessage = "A burner will enter its random burnout phase soon!";
+
                     if (preWarningNotification.isEnabled()) {
-                        notifier.notify(preWarningNotification, "A POH burner will enter its random burnout phase soon!");
+                        notifier.notify(preWarningNotification, BurnerAlarmConstants.PLUGIN_PREFIX + notificationMessage);
                     }
 
                     if (config.burnerPreWarningGameMessage()) {
                         client.addChatMessage(ChatMessageType.GAMEMESSAGE, "",
-                                ColorUtil.wrapWithColorTag("A POH burner will enter its random burnout phase soon!", config.burnerPreWarningColor()), null);
+                                ColorUtil.wrapWithColorTag(BurnerAlarmConstants.PLUGIN_PREFIX + "A burner will enter its random burnout phase soon!", config.burnerPreWarningColor()), null);
                     }
+
                     lastPreWarningTick = currentTick;
                     log.debug("POH Assistant: Burner pre-warning triggered.");
                 }
@@ -271,14 +274,14 @@ public class BurnerAlarmPlugin extends Plugin {
             }
 
             if (notification != null && notification.isEnabled()) {
-                notifier.notify(notification, notificationMessage);
+                notifier.notify(notification, BurnerAlarmConstants.PLUGIN_PREFIX + notificationMessage);
                 log.info("POH Assistant: Tip jar notification for {} tipped {} coins.", playerName, formattedAmount);
+            }
 
-                if (config.tipJarRecolorChatMessage() && color != null) {
-                    final MessageNode messageNode = event.getMessageNode();
-                    messageNode.setValue(ColorUtil.wrapWithColorTag(messageNode.getValue(), color));
-                    client.refreshChat();
-                }
+            if (config.tipJarRecolorChatMessage() && color != null) {
+                final MessageNode messageNode = event.getMessageNode();
+                messageNode.setValue(ColorUtil.wrapWithColorTag(messageNode.getValue(), color));
+                client.refreshChat();
             }
         } catch (NumberFormatException e) {
             log.warn("Failed to parse tip jar amount: {}", amountString, e);
@@ -331,10 +334,10 @@ public class BurnerAlarmPlugin extends Plugin {
             log.info("POH Assistant: Detected Combat Level 126 for {} (graphic: {}).", player.getName(), (isLevel99Graphic ? "99 graphic" : "generic graphic"));
 
             if (notificationConfig.isEnabled()) {
-                notifier.notify(notificationConfig, notificationMessage);
-                if (sendGameMessage && messageColor != null) {
-                    client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", ColorUtil.wrapWithColorTag(notificationMessage, messageColor), null);
-                }
+                notifier.notify(notificationConfig, BurnerAlarmConstants.PLUGIN_PREFIX + notificationMessage);
+            }
+            if (sendGameMessage && messageColor != null) {
+                client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", ColorUtil.wrapWithColorTag(BurnerAlarmConstants.PLUGIN_PREFIX + notificationMessage, messageColor), null);
             }
             // If Combat Level 126 was just achieved, the next 99/126 graphic is likely for this achievement, so suppress it.
             playerSuppressNext99GraphicFor126.put(player.getName(), true);
@@ -349,10 +352,10 @@ public class BurnerAlarmPlugin extends Plugin {
             log.info("POH Assistant: Detected Generic Level-Up for {}", player.getName());
 
             if (notificationConfig.isEnabled()) {
-                notifier.notify(notificationConfig, notificationMessage);
-                if (sendGameMessage && messageColor != null) {
-                    client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", ColorUtil.wrapWithColorTag(notificationMessage, messageColor), null);
-                }
+                notifier.notify(notificationConfig, BurnerAlarmConstants.PLUGIN_PREFIX + notificationMessage);
+            }
+            if (sendGameMessage && messageColor != null) {
+                client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", ColorUtil.wrapWithColorTag(BurnerAlarmConstants.PLUGIN_PREFIX + notificationMessage, messageColor), null);
             }
         }
         // Level 99 Skill Detection (from LEVEL_99_GRAPHIC_ID)
@@ -373,10 +376,10 @@ public class BurnerAlarmPlugin extends Plugin {
                 log.info("POH Assistant: Detected Level 99 for {}", player.getName());
 
                 if (notificationConfig.isEnabled()) {
-                    notifier.notify(notificationConfig, notificationMessage);
-                    if (sendGameMessage && messageColor != null) {
-                        client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", ColorUtil.wrapWithColorTag(notificationMessage, messageColor), null);
-                    }
+                    notifier.notify(notificationConfig, BurnerAlarmConstants.PLUGIN_PREFIX + notificationMessage);
+                }
+                if (sendGameMessage && messageColor != null) {
+                    client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", ColorUtil.wrapWithColorTag(BurnerAlarmConstants.PLUGIN_PREFIX + notificationMessage, messageColor), null);
                 }
             }
         }
@@ -482,7 +485,7 @@ public class BurnerAlarmPlugin extends Plugin {
         log.debug("POH Assistant: Marrentill count updated. Previous: {}, Current: {}. NotifiedLowStock: {}",
                 previousCount, count, notifiedLowStock);
 
-        if (config.marrentillNotification().isEnabled()) {
+        if (config.marrentillNotification().isEnabled() || config.marrentillGameMessage()) {
             if (count <= 1 && !notifiedLowStock && previousCount > 1) {
                 String message;
                 if (count == 0) {
@@ -491,9 +494,12 @@ public class BurnerAlarmPlugin extends Plugin {
                     message = "You're almost out of unnoted Marrentills!";
                 }
 
-                notifier.notify(config.marrentillNotification(), message);
+                if (config.marrentillNotification().isEnabled()) {
+                    notifier.notify(config.marrentillNotification(), BurnerAlarmConstants.PLUGIN_PREFIX + message);
+                }
+
                 if (config.marrentillGameMessage()) {
-                    client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", ColorUtil.wrapWithColorTag(message, config.marrentillGameMessageColor()), null);
+                    client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", ColorUtil.wrapWithColorTag(BurnerAlarmConstants.PLUGIN_PREFIX + message, config.marrentillGameMessageColor()), null);
                 }
                 notifiedLowStock = true;
                 log.info("POH Assistant: Notified - Low Marrentill stock (Current: {}).", count);

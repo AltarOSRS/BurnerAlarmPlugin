@@ -8,6 +8,9 @@ import java.util.regex.Pattern;
 final class BurnerAlarmConstants {
     private BurnerAlarmConstants() {}
 
+    // Plugin Name Prefix for chat messages
+    static final String PLUGIN_PREFIX = "[House Hosting] ";
+
     // Game Object IDs for various POH elements
     static final Set<Integer> LIT_BURNER_IDS = ImmutableSet.of(13211, 13213);
     static final Set<Integer> UNLIT_BURNER_IDS = ImmutableSet.of(13210, 13212);

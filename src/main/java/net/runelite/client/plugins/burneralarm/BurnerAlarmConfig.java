@@ -13,21 +13,7 @@ public interface BurnerAlarmConfig extends Config {
 
     @ConfigItem(keyName = "sendNotification", name = "Pre-warning Notification", description = "Configure the notification that fires shortly before burners can go out.", position = 1, section = burnerAlarmSection)
     default Notification burnerPreWarningNotification() {
-        return new Notification()
-                .withEnabled(true)
-                .withInitialized(true)
-                .withOverride(true)
-                .withTray(true)
-                .withTrayIconType(TrayIcon.MessageType.NONE)
-                .withRequestFocus(RequestFocusType.OFF)
-                .withSound(NotificationSound.NATIVE)
-                .withSoundName(null)
-                .withVolume(50)
-                .withTimeout(10000)
-                .withGameMessage(false)
-                .withFlash(FlashNotification.FLASH_TWO_SECONDS)
-                .withFlashColor(new Color(185, 65, 0, 70))
-                .withSendWhenFocused(true);
+        return Notification.ON;
     }
 
     @ConfigItem(keyName = "burnerPreWarningColor", name = "Message Color", description = "Color of the burner pre-warning message in chat.", position = 2, section = burnerAlarmSection)
@@ -89,100 +75,58 @@ public interface BurnerAlarmConfig extends Config {
     @ConfigSection(name = "Tip Jar Notifications", description = "Settings for tip jar notifications and chat recoloring.", position = 10, closedByDefault = false)
     String tipJarSection = "tipJarSection";
 
-    // Tier 3
-    @ConfigItem(keyName = "tipJarTier3Notification", name = "Tier 3 Notification", description = "Notification for the lowest tier of tips.", position = 11, section = tipJarSection)
-    default Notification tipJarTier3Notification() {
-        return new Notification()
-                .withEnabled(true)
-                .withInitialized(true)
-                .withOverride(true)
-                .withTray(true)
-                .withTrayIconType(TrayIcon.MessageType.NONE)
-                .withRequestFocus(RequestFocusType.OFF)
-                .withSound(NotificationSound.NATIVE)
-                .withSoundName(null)
-                .withVolume(50)
-                .withTimeout(10000)
-                .withGameMessage(false)
-                .withFlash(FlashNotification.FLASH_TWO_SECONDS)
-                .withFlashColor(new Color(0, 115, 0, 70))
-                .withSendWhenFocused(true);
-    }
-
-    @Units(" gp")
-    @ConfigItem(keyName = "tipJarTier3Threshold", name = "Tier 3 Threshold", description = "Minimum tip amount to trigger the Tier 3 notification.", position = 12, section = tipJarSection)
-    default int tipJarTier3Threshold() {
-        return 100_000;
-    }
-
-    @ConfigItem(keyName = "tipJarTier3Color", name = "Tier 3 Color", description = "Color of the Tier 3 tip message in chat.", position = 13, section = tipJarSection)
-    default Color tipJarTier3Color() {
-        return new Color(0, 115, 0);
-    }
-
-    @ConfigItem(keyName = "tipJarRecolorChatMessage", name = "Recolor Tip Jar Chat", description = "Recolor the in-game tip jar message.", position = 13, section = tipJarSection)
+    @ConfigItem(keyName = "tipJarRecolorChatMessage", name = "Recolor Tip Jar Chat", description = "Recolor the in-game tip jar message.", position = 11, section = tipJarSection)
     default boolean tipJarRecolorChatMessage() {
         return true;
     }
 
-    // Tier 2
-    @ConfigItem(keyName = "tipJarTier2Notification", name = "Tier 2 Notification", description = "Notification for the middle tier of tips.", position = 14, section = tipJarSection)
-    default Notification tipJarTier2Notification() {
-        return new Notification()
-                .withEnabled(true)
-                .withInitialized(true)
-                .withOverride(true)
-                .withTray(true)
-                .withTrayIconType(TrayIcon.MessageType.NONE)
-                .withRequestFocus(RequestFocusType.OFF)
-                .withSound(NotificationSound.NATIVE)
-                .withSoundName(null)
-                .withVolume(50)
-                .withTimeout(10000)
-                .withGameMessage(false)
-                .withFlash(FlashNotification.FLASH_TWO_SECONDS)
-                .withFlashColor(new Color(100, 100, 255, 70))
-                .withSendWhenFocused(true);
+    // Tier 3
+    @ConfigItem(keyName = "tipJarTier3Notification", name = "Tier 3 Notification", description = "Notification for the lowest tier of tips.", position = 12, section = tipJarSection)
+    default Notification tipJarTier3Notification() {
+        return Notification.ON;
     }
 
     @Units(" gp")
-    @ConfigItem(keyName = "tipJarTier2Threshold", name = "Tier 2 Threshold", description = "Minimum tip amount to trigger the Tier 2 notification.", position = 15, section = tipJarSection)
+    @ConfigItem(keyName = "tipJarTier3Threshold", name = "Tier 3 Threshold", description = "Minimum tip amount to trigger the Tier 3 notification.", position = 13, section = tipJarSection)
+    default int tipJarTier3Threshold() {
+        return 100_000;
+    }
+
+    @ConfigItem(keyName = "tipJarTier3Color", name = "Tier 3 Color", description = "Color of the Tier 3 tip message in chat.", position = 14, section = tipJarSection)
+    default Color tipJarTier3Color() {
+        return new Color(0, 115, 0);
+    }
+
+    // Tier 2
+    @ConfigItem(keyName = "tipJarTier2Notification", name = "Tier 2 Notification", description = "Notification for the middle tier of tips.", position = 15, section = tipJarSection)
+    default Notification tipJarTier2Notification() {
+        return Notification.ON;
+    }
+
+    @Units(" gp")
+    @ConfigItem(keyName = "tipJarTier2Threshold", name = "Tier 2 Threshold", description = "Minimum tip amount to trigger the Tier 2 notification.", position = 16, section = tipJarSection)
     default int tipJarTier2Threshold() {
         return 1_000_000;
     }
 
-    @ConfigItem(keyName = "tipJarTier2Color", name = "Tier 2 Color", description = "Color of the Tier 2 tip message in chat.", position = 16, section = tipJarSection)
+    @ConfigItem(keyName = "tipJarTier2Color", name = "Tier 2 Color", description = "Color of the Tier 2 tip message in chat.", position = 17, section = tipJarSection)
     default Color tipJarTier2Color() {
         return new Color(100, 100, 255);
     }
 
     // Tier 1
-    @ConfigItem(keyName = "tipJarTier1Notification", name = "Tier 1 Notification", description = "Notification for the highest tier of tips.", position = 17, section = tipJarSection)
+    @ConfigItem(keyName = "tipJarTier1Notification", name = "Tier 1 Notification", description = "Notification for the highest tier of tips.", position = 18, section = tipJarSection)
     default Notification tipJarTier1Notification() {
-        return new Notification()
-                .withEnabled(true)
-                .withInitialized(true)
-                .withOverride(true)
-                .withTray(true)
-                .withTrayIconType(TrayIcon.MessageType.NONE)
-                .withRequestFocus(RequestFocusType.OFF)
-                .withSound(NotificationSound.NATIVE)
-                .withSoundName(null)
-                .withVolume(50)
-                .withTimeout(10000)
-                .withGameMessage(false)
-                .withFlash(FlashNotification.FLASH_TWO_SECONDS)
-                .withFlashColor(new Color(220, 0, 220, 70))
-                .withSendWhenFocused(true);
+        return Notification.ON;
     }
 
     @Units(" gp")
-    @ConfigItem(keyName = "tipJarTier1Threshold", name = "Tier 1 Threshold", description = "Minimum tip amount to trigger the Tier 1 notification.", position = 18, section = tipJarSection)
+    @ConfigItem(keyName = "tipJarTier1Threshold", name = "Tier 1 Threshold", description = "Minimum tip amount to trigger the Tier 1 notification.", position = 19, section = tipJarSection)
     default int tipJarTier1Threshold() {
         return 10_000_000;
     }
 
-    @ConfigItem(keyName = "tipJarTier1Color", name = "Tier 1 Color", description = "Color of the Tier 1 tip message in chat.", position = 19, section = tipJarSection)
+    @ConfigItem(keyName = "tipJarTier1Color", name = "Tier 1 Color", description = "Color of the Tier 1 tip message in chat.", position = 20, section = tipJarSection)
     default Color tipJarTier1Color() {
         return new Color(220, 0, 220);
     }
@@ -193,21 +137,7 @@ public interface BurnerAlarmConfig extends Config {
 
     @ConfigItem(keyName = "levelUpNotification", name = "Generic Level-Up Notification", description = "Configure the notification for a generic level-up by another player.", position = 21, section = levelUpSection)
     default Notification levelUpNotification() {
-        return new Notification()
-                .withEnabled(false)
-                .withInitialized(true)
-                .withOverride(true)
-                .withTray(false)
-                .withTrayIconType(TrayIcon.MessageType.NONE)
-                .withRequestFocus(RequestFocusType.OFF)
-                .withSound(NotificationSound.OFF)
-                .withSoundName(null)
-                .withVolume(50)
-                .withTimeout(10000)
-                .withGameMessage(false)
-                .withFlash(FlashNotification.DISABLED)
-                .withFlashColor(new Color(0, 145, 140, 70))
-                .withSendWhenFocused(false);
+        return Notification.OFF;
     }
 
     @ConfigItem(keyName = "levelUpColor", name = "Message Color", description = "Color of the Generic Level-Up message in chat.", position = 22, section = levelUpSection)
@@ -222,21 +152,7 @@ public interface BurnerAlarmConfig extends Config {
 
     @ConfigItem(keyName = "level99Notification", name = "Level 99 Notification", description = "Configure the notification for a level 99 achievement by another player (non-combat).", position = 23, section = levelUpSection)
     default Notification level99Notification() {
-        return new Notification()
-                .withEnabled(true)
-                .withInitialized(true)
-                .withOverride(true)
-                .withTray(true)
-                .withTrayIconType(TrayIcon.MessageType.NONE)
-                .withRequestFocus(RequestFocusType.OFF)
-                .withSound(NotificationSound.NATIVE)
-                .withSoundName(null)
-                .withVolume(50)
-                .withTimeout(10000)
-                .withGameMessage(false)
-                .withFlash(FlashNotification.FLASH_TWO_SECONDS)
-                .withFlashColor(new Color(90, 0, 180, 70))
-                .withSendWhenFocused(true);
+        return Notification.ON;
     }
 
     @ConfigItem(keyName = "level99Color", name = "Message Color", description = "Color of the Level 99 achievement message in chat (non-combat).", position = 24, section = levelUpSection)
@@ -252,21 +168,7 @@ public interface BurnerAlarmConfig extends Config {
     // --- Combat Level 126 Notification ---
     @ConfigItem(keyName = "level126CombatNotification", name = "Combat Level 126 Notification", description = "Configure the notification for a Combat Level 126 achievement by another player.", position = 25, section = levelUpSection)
     default Notification level126CombatNotification() {
-        return new Notification()
-                .withEnabled(true)
-                .withInitialized(true)
-                .withOverride(true)
-                .withTray(true)
-                .withTrayIconType(TrayIcon.MessageType.NONE)
-                .withRequestFocus(RequestFocusType.OFF)
-                .withSound(NotificationSound.NATIVE)
-                .withSoundName(null)
-                .withVolume(75)
-                .withTimeout(10000)
-                .withGameMessage(false)
-                .withFlash(FlashNotification.FLASH_TWO_SECONDS)
-                .withFlashColor(new Color(120, 0, 135, 70))
-                .withSendWhenFocused(true);
+        return Notification.ON;
     }
 
     @ConfigItem(keyName = "level126CombatGameMessage", name = "Chat Message", description = "Toggle custom chat message for Combat Level 126 achievements.", position = 26, section = levelUpSection)
@@ -286,21 +188,7 @@ public interface BurnerAlarmConfig extends Config {
 
     @ConfigItem(keyName = "marrentillNotification", name = "Out of Marrentills Notification", description = "Configure notification when you run out of unnoted Clean Marrentills.", position = 41, section = marrentillTrackerSection)
     default Notification marrentillNotification() {
-        return new Notification()
-                .withEnabled(true)
-                .withInitialized(true)
-                .withOverride(true)
-                .withTray(true)
-                .withTrayIconType(TrayIcon.MessageType.NONE)
-                .withRequestFocus(RequestFocusType.OFF)
-                .withSound(NotificationSound.NATIVE)
-                .withSoundName(null)
-                .withVolume(50)
-                .withTimeout(5000)
-                .withGameMessage(false)
-                .withFlash(FlashNotification.FLASH_TWO_SECONDS)
-                .withFlashColor(new Color(0, 105, 70, 70))
-                .withSendWhenFocused(true);
+        return Notification.ON;
     }
 
     @ConfigItem(keyName = "marrentillGameMessageColor", name = "Chat Message Color", description = "Color of the 'Out of Marrentills' chat message.", position = 42, section = marrentillTrackerSection)
