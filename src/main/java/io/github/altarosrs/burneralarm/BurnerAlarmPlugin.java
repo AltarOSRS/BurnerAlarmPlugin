@@ -1,4 +1,4 @@
-package net.runelite.client.plugins.burneralarm;
+package io.github.altarosrs.burneralarm;
 
 import com.google.inject.Provides;
 import lombok.Getter;
