@@ -8,6 +8,37 @@ A RuneLite plugin designed to assist players hosting their Player-Owned Houses (
 
 This plugin provides several key functionalities to help you manage your POH hosting:
 
+![House Hosting Plugin](1.jpg)
+
+### Tip Tracker Panel
+
+Track and manage tips received during hosting sessions.
+
+<p>
+  <img src="2.png" alt="Tip Tracker - Recent Tips" width="240">
+  <img src="3.png" alt="Tip Tracker - Leaderboard" width="240">
+</p>
+
+* **Sidebar Panel:** Dedicated panel showing tip history and leaderboard.
+
+* **Persistent Leaderboard:** All-time leaderboard that persists across sessions.
+
+* **Time Filtering:** View tips by session, weekly, monthly, or all-time.
+
+* **Manual Entry:** Add, edit, or delete tip entries manually.
+
+* **Trade Tip Detection:** Automatically captures tips received via the trade window.
+
+### Tip Jar Notifications
+
+Get notified when players add coins to your tip jar.
+
+* **Tiered Notifications:** Different notifications and chat recoloring based on tip amount.
+
+* **Configurable Thresholds:** Set custom thresholds for tip tiers.
+
+* **Chat Recolor:** Automatically recolors in-game tip jar messages.
+
 ### Burner Alarm
 
 Receive notifications before your incense burners extinguish.
@@ -20,8 +51,6 @@ Receive notifications before your incense burners extinguish.
 
 * **Grace Period:** Configurable grace period after burners expire before the alarm triggers, giving you time to relight.
 
-* **Hiscore Lookups:** Optionally looks up guests' Firemaking levels to calculate accurate burn durations.
-
 ### Burner Highlights
 
 Easily identify burner states at a glance.
@@ -33,30 +62,6 @@ Easily identify burner states at a glance.
 * **Multiple Styles:** Choose from hull, outline, clickbox, or tile highlight styles.
 
 * **Configurable Color & Width:** Choose highlight colors and outline thickness.
-
-### Tip Jar Notifications
-
-Get notified when players add coins to your tip jar.
-
-* **Tiered Notifications:** Different notifications and chat recoloring based on tip amount.
-
-* **Configurable Thresholds:** Set custom thresholds for tip tiers.
-
-* **Chat Recolor:** Automatically recolors in-game tip jar messages.
-
-### Tip Tracker Panel
-
-Track and manage tips received during hosting sessions.
-
-* **Sidebar Panel:** Dedicated panel showing tip history and leaderboard.
-
-* **Persistent Leaderboard:** All-time leaderboard that persists across sessions.
-
-* **Time Filtering:** View tips by session, weekly, monthly, or all-time.
-
-* **Manual Entry:** Add, edit, or delete tip entries manually.
-
-* **Trade Tip Detection:** Automatically captures tips received via the trade window.
 
 ### Player Level-Up Notifications
 
