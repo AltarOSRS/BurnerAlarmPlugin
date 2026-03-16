@@ -407,7 +407,7 @@ public class BurnerAlarmPlugin extends Plugin {
                     }
 
                     for (GameObject gameObject : tile.getGameObjects()) {
-                        if (gameObject != null && (BurnerAlarmConstants.GILDED_ALTAR_IDS.contains(gameObject.getId()) || gameObject.getId() == BurnerAlarmConstants.EXIT_PORTAL_ID)) {
+                        if (gameObject != null && (BurnerAlarmConstants.GILDED_ALTAR_IDS.contains(gameObject.getId()) || BurnerAlarmConstants.EXIT_PORTAL_IDS.contains(gameObject.getId()))) {
                             return true;
                         }
                     }

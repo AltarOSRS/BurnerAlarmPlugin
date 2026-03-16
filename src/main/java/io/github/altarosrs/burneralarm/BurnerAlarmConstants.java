@@ -15,7 +15,7 @@ final class BurnerAlarmConstants {
     static final Set<Integer> LIT_BURNER_IDS = ImmutableSet.of(13211, 13213, 57735);
     static final Set<Integer> UNLIT_BURNER_IDS = ImmutableSet.of(13210, 13212, 57734);
     static final Set<Integer> GILDED_ALTAR_IDS = ImmutableSet.of(13197, 13198, 13199);
-    static final int EXIT_PORTAL_ID = 4525;
+    static final Set<Integer> EXIT_PORTAL_IDS = ImmutableSet.of(4525, 60789);
 
     // Item IDs
     static final int CLEAN_MARRENTILL_ID = 251;
