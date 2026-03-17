@@ -95,7 +95,7 @@ public class HouseDetectionService
 			}
 			catch (Exception e)
 			{
-				log.error("Failed to load house fingerprint, resetting data for {}.",
+				log.warn("Failed to load house fingerprint, resetting data for {}.",
 					client.getLocalPlayer().getName(), e);
 				configManager.unsetConfiguration("burneralarm", fingerprintKey);
 			}
@@ -166,14 +166,14 @@ public class HouseDetectionService
 		if (client.getLocalPlayer() == null || client.getLocalPlayer().getName() == null)
 		{
 			client.addChatMessage(ChatMessageType.GAMEMESSAGE, "",
-				"You must be logged in to scan your house.", null);
+				BurnerAlarmConstants.PLUGIN_PREFIX + "You must be logged in to scan your house.", null);
 			log.debug("Scan failed: Not logged in.");
 			return;
 		}
 		if (!isInPOH())
 		{
 			client.addChatMessage(ChatMessageType.GAMEMESSAGE, "",
-				"You must be inside your Player-Owned House to scan.", null);
+				BurnerAlarmConstants.PLUGIN_PREFIX + "You must be inside your Player-Owned House to scan.", null);
 			log.debug("Scan failed: Not detected in any POH (no key POH objects found).");
 			return;
 		}
@@ -191,8 +191,8 @@ public class HouseDetectionService
 		if (result != JOptionPane.OK_OPTION)
 		{
 			client.addChatMessage(ChatMessageType.GAMEMESSAGE, "",
-				"House scan cancelled.", null);
-			log.info("Scan cancelled by user confirmation dialog.");
+				BurnerAlarmConstants.PLUGIN_PREFIX + "House scan cancelled.", null);
+			log.debug("Scan cancelled by user confirmation dialog.");
 			return;
 		}
 
@@ -202,7 +202,7 @@ public class HouseDetectionService
 			if (playerLocalLocation == null)
 			{
 				client.addChatMessage(ChatMessageType.GAMEMESSAGE, "",
-					"Could not determine player location. Scan failed.", null);
+					BurnerAlarmConstants.PLUGIN_PREFIX + "Could not determine player location. Scan failed.", null);
 				log.debug("Scan failed: LocalPoint is null for local player.");
 				return;
 			}
@@ -212,7 +212,7 @@ public class HouseDetectionService
 			if (objectIdCounts.isEmpty())
 			{
 				client.addChatMessage(ChatMessageType.GAMEMESSAGE, "",
-					"Error: Could not find any static objects to form a fingerprint. Scan failed.", null);
+					BurnerAlarmConstants.PLUGIN_PREFIX + "Could not find any static objects to form a fingerprint. Scan failed.", null);
 				log.debug("Scan failed: No static objects found in the loaded scene radius.");
 				return;
 			}
@@ -222,8 +222,8 @@ public class HouseDetectionService
 			configManager.setConfiguration("burneralarm", fingerprintKey, gson.toJson(fingerprint));
 			this.savedFingerprint = fingerprint;
 			client.addChatMessage(ChatMessageType.GAMEMESSAGE, "",
-				"House fingerprint saved successfully! Advanced detection is now active for this house.", null);
-			log.info("Scan successful. Fingerprint saved with: {} unique objects.", objectIdCounts.size());
+				BurnerAlarmConstants.PLUGIN_PREFIX + "House fingerprint saved successfully! Advanced detection is now active for this house.", null);
+			log.debug("Scan successful. Fingerprint saved with: {} unique objects.", objectIdCounts.size());
 
 			checkIfInMyPOH();
 		});

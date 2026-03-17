@@ -267,7 +267,7 @@ public class TipTrackerManager
 			return;
 		}
 
-		log.info("Migrating legacy tip tracker data to monthly keys");
+		log.debug("Migrating legacy tip tracker data to monthly keys");
 
 		try
 		{
@@ -295,7 +295,7 @@ public class TipTrackerManager
 			}
 
 			configManager.unsetConfiguration(CONFIG_GROUP, LEGACY_KEY);
-			log.info("Legacy tip data migration complete");
+			log.debug("Legacy tip data migration complete");
 		}
 		catch (Exception e)
 		{

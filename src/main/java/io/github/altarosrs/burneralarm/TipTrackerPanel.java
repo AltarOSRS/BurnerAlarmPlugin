@@ -291,10 +291,10 @@ public class TipTrackerPanel extends PluginPanel
 		long weeklyTotal = manager.getWeeklyTotal();
 		long monthlyTotal = manager.getMonthlyTotal();
 		long allTimeTotal = manager.getAllTimeTotal();
-		sessionTotalLabel.setText(QuantityFormatter.quantityToRSDecimalStack((int) sessionTotal, true) + " gp");
-		weeklyTotalLabel.setText(QuantityFormatter.quantityToRSDecimalStack((int) weeklyTotal, true) + " gp");
-		monthlyTotalLabel.setText(QuantityFormatter.quantityToRSDecimalStack((int) monthlyTotal, true) + " gp");
-		allTimeTotalLabel.setText(QuantityFormatter.quantityToRSDecimalStack((int) allTimeTotal, true) + " gp");
+		sessionTotalLabel.setText(QuantityFormatter.quantityToStackSize(sessionTotal) + " gp");
+		weeklyTotalLabel.setText(QuantityFormatter.quantityToStackSize(weeklyTotal) + " gp");
+		monthlyTotalLabel.setText(QuantityFormatter.quantityToStackSize(monthlyTotal) + " gp");
+		allTimeTotalLabel.setText(QuantityFormatter.quantityToStackSize(allTimeTotal) + " gp");
 
 		leaderboardContainer.removeAll();
 
@@ -375,7 +375,7 @@ public class TipTrackerPanel extends PluginPanel
 		JPanel topLine = new JPanel(new BorderLayout(5, 0));
 		topLine.setOpaque(false);
 
-		String formattedAmount = QuantityFormatter.quantityToRSDecimalStack((int) tip.getAmount(), true);
+		String formattedAmount = QuantityFormatter.quantityToStackSize(tip.getAmount());
 		JLabel amountLabel = new JLabel(formattedAmount + " gp");
 		amountLabel.setForeground(manager.getColorForAmount(tip.getAmount()));
 		topLine.add(amountLabel, BorderLayout.WEST);
@@ -439,7 +439,7 @@ public class TipTrackerPanel extends PluginPanel
 		row.setBackground(ColorScheme.DARKER_GRAY_COLOR);
 		row.setBorder(new EmptyBorder(5, 5, 5, 5));
 
-		String formattedAmount = QuantityFormatter.quantityToRSDecimalStack((int) entry.getTotalAmount(), true);
+		String formattedAmount = QuantityFormatter.quantityToStackSize(entry.getTotalAmount());
 		String tipCount = entry.getTipCount() + (entry.getTipCount() > 1 ? " tips" : " tip");
 
 		JLabel infoLabel = new JLabel("<html>" + entry.getPlayerName()
