@@ -45,7 +45,7 @@ final class BurnerAlarmConstants
 	// POH detection object IDs (Gilded Altar, Exit Portal, Tip Jar, Dungeon Entrance, Ornate Pool)
 	static final Set<Integer> POH_DETECTION_OBJECT_IDS = ImmutableSet.of(
 		13197, 13198, 13199,
-		4525,
+		4525, 60789,
 		29146,
 		4529,
 		29241
